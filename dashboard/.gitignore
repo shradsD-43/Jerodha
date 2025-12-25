@@ -1,0 +1,4 @@
+# to not push on git
+/node_modules
+.env
+/build
