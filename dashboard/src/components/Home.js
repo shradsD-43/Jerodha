@@ -14,10 +14,10 @@ const Home = () => {
 
   useEffect(() => {
     const verifyCookie = async () => {
-      if (!cookies.token) {
-        window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
-        return;
-      }
+      // if (!cookies.token) {
+      //   window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+      //   return;
+      // }
       try {
         const { data } = await axios.post(
           `${process.env.REACT_APP_BACKEND_URL}/verify`,
