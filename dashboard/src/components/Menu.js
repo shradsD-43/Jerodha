@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const Menu = ({username}) => {
   const [selectedMenu, setSelectedMenu] = useState(0);
