@@ -1,7 +1,7 @@
 const { UsersModel } = require("../models/UsersModel");
 const { createSecretToken } = require("../util/SecretToken");
 
-module.exports.Signup = async (req, res, next) => {
+module.exports.Signup = async (req, res) => {
   try {
     const { email, password, username } = req.body;
 
@@ -15,12 +15,13 @@ module.exports.Signup = async (req, res, next) => {
     const tokenVal = createSecretToken(user._id);
     res.cookie("token", tokenVal, {
       withCredentials: true,
-      httpOnly: false,
+      httpOnly: false, // JS can access token
+      secure: true, // REQUIRED on HTTPS (Render)
+      sameSite: "None", // REQUIRED for cross-domain cookies
     });
     res
       .status(201)
       .json({ message: "User signed in successfully", success: true, user });
-    next();
   } catch (error) {
     console.error(error);
   }

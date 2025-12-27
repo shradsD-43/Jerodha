@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,8 +8,9 @@ import Dashboard from "./Dashboard";
 import TopBar from "./TopBar";
 
 const Home = () => {
-  const [cookies, , removeCookie] = useCookies([]);
+  const [cookies, ,removeCookie] = useCookies([]);
   const [username, setUsername] = useState("JUSER");
+  const toastShown = useRef(false);
 
   useEffect(() => {
     const verifyCookie = async () => {
@@ -28,22 +29,45 @@ const Home = () => {
 
         if (status) {
           setUsername(user);
-          toast(`Hello ${user}`, { position: "top-right" });
+          if (!toastShown.current) {
+            toast(`Hello ${user}`, { position: "top-right" });
+            toastShown.current = true;
+          }
         } else {
           removeCookie("token");
-          window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+          try {
+            await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}/logout`,
+              {},
+              { withCredentials: true }
+            );
+          } catch (err) {
+            console.error(err);
+          } finally {
+            window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+          }
         }
       } catch {
         removeCookie("token");
-        window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+        try {
+            await axios.post(
+              `${process.env.REACT_APP_BACKEND_URL}/logout`,
+              {},
+              { withCredentials: true }
+            );
+          } catch (err) {
+            console.error(err);
+          } finally {
+            window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+          }
       }
     };
     verifyCookie();
-  }, [cookies.token, removeCookie]);
+  }, []); //cookies.token, removeCookie
 
   return (
     <>
-      <TopBar username={username}/>
+      <TopBar username={username} />
       <Dashboard username={username} />
       <ToastContainer />
     </>

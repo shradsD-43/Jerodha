@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 const Menu = ({username}) => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [ , , removeCookie] = useCookies(["token"]);
+  const [, ,removeCookie] = useCookies([]);
 
   const handleMenuClick = (index) => {
     setSelectedMenu(index);
@@ -15,9 +15,18 @@ const Menu = ({username}) => {
     setIsProfileOpen(!isProfileOpen);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     removeCookie("token");
-    window.location.href = process.env.REACT_APP_FRONTEND_URL; 
+    try {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/logout`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      window.location.href = process.env.REACT_APP_FRONTEND_URL;
+    }
   };
 
   const menuClass = "menu";

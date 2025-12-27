@@ -25,7 +25,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cookieParser());
 
 app.listen(PORT, () => {
@@ -68,3 +68,13 @@ app.post("/login", Login);
 
 // jwt token in cookie verification 
 app.post("/verify", userVerification);
+
+// logout route to remove cookie
+app.post("/logout", (req, res) => {
+  res.clearCookie("token", {
+    secure: true,
+    sameSite: "None",
+    path: "/",
+  });
+  res.json({ success: true });
+});
