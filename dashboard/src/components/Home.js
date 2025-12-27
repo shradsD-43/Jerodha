@@ -8,7 +8,7 @@ import Dashboard from "./Dashboard";
 import TopBar from "./TopBar";
 
 const Home = () => {
-  const [cookies, ,removeCookie] = useCookies([]);
+  const [cookies, , removeCookie] = useCookies([]);
   const [username, setUsername] = useState("JUSER");
   const toastShown = useRef(false);
 
@@ -34,36 +34,29 @@ const Home = () => {
             toastShown.current = true;
           }
         } else {
-          removeCookie("token");
-          try {
-            await axios.post(
-              `${process.env.REACT_APP_BACKEND_URL}/logout`,
-              {},
-              { withCredentials: true }
-            );
-          } catch (err) {
-            console.error(err);
-          } finally {
-            window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
-          }
+          await logoutAndRedirect();
         }
-      } catch {
-        removeCookie("token");
-        try {
-            await axios.post(
-              `${process.env.REACT_APP_BACKEND_URL}/logout`,
-              {},
-              { withCredentials: true }
-            );
-          } catch (err) {
-            console.error(err);
-          } finally {
-            window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
-          }
+      } catch (err) {
+        await logoutAndRedirect();
       }
     };
     verifyCookie();
-  }, [cookies.token, removeCookie]);
+  }, [removeCookie]);
+
+  const logoutAndRedirect = async () => {
+    removeCookie("token");
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/logout`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      window.location.href = `${process.env.REACT_APP_FRONTEND_URL}/login`;
+    }
+  };
 
   return (
     <>
