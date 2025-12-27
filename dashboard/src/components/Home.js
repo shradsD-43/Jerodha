@@ -63,7 +63,7 @@ const Home = () => {
       }
     };
     verifyCookie();
-  }, []); //cookies.token, removeCookie
+  }, [cookies.token, removeCookie]);
 
   return (
     <>
